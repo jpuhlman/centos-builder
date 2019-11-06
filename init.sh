@@ -10,7 +10,7 @@ echo "$USERNAME  ALL=(ALL)       NOPASSWD: ALL" | tee -a /etc/sudoers > /dev/nul
 sudo usermod -a -G mock $USERNAME
 echo "export MOCK_OPTS='--old-chroot'" >> /etc/bashrc
 echo
-echo "Welcome to centos 6 builder"
+echo "Welcome to centos 7 builder"
 echo
 su - $USERNAME
 
