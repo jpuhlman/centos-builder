@@ -1,0 +1,36 @@
+#!/bin/bash
+LOCALHOME=$(echo ~)
+STAMP=$(date +%y%m%d%H%M)
+DISTRO=centos
+VERSION=6
+IMAGE=jpuhlman/$DISTRO-builder:v$VERSION
+PULL_IMAGE="1"
+MOCK_REQUIREMENTS="--privileged \
+                  --cap-add=SYS_ADMIN \
+                  --security-opt seccomp:unconfined \
+                  --security-opt label:disable \
+                   --volume $LOCALHOME/.mock:/var/lib/mock \
+"
+USER_ENVIORNMENT="--hostname $HOSTNAME \
+                 -e USERID=$(id -u) \
+                 -e USERGID=$(id -g) \
+                 -e USERNAME=$USER \
+                 -e HOME=$LOCALHOME \
+                 -e LANG=en_US.UTF-8 \
+                 -v $LOCALHOME:$LOCALHOME \
+"
+DOCKER_ACCESS="-v /var/run/docker.sock:/var/run/docker.sock"
+if [ -e $LOCALHOME/.$DISTRO-builder ] ; then
+    source $LOCALHOME/.$DISTRO-builder
+fi
+if [ "$PULL_IMAGE" = "1" ] ; then
+    sudo docker pull $IMAGE
+fi
+sudo docker run -it \
+    --name $DISTRO-$VERSION-$STAMP \
+    $MOCK_REQUIREMENTS \
+    $DOCKER_ACCESS \
+    $USER_ENVIORNMENT \
+    $EXTRA_DOCKER_CONFIGS \
+    $IMAGE $*
+sudo docker rm $DISTRO-$VERSION-$STAMP
