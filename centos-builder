@@ -17,8 +17,17 @@ USER_ENVIORNMENT="--hostname $HOSTNAME \
                  -e USERNAME=$USER \
                  -e HOME=$LOCALHOME \
                  -e LANG=en_US.UTF-8 \
+                 -e CURRENTPATH=$(pwd) \
                  -v $LOCALHOME:$LOCALHOME \
 "
+SCRIPTRUNNER=""
+if [ "$1" ] ; then
+   SCRIPT=$1
+   SCRIPTRUNNER="-v $(readlink -f $SCRIPT):/run.sh\
+                -e SCRIPTRUNNER=/run.sh \
+   "
+fi
+
 DOCKER_ACCESS="-v /var/run/docker.sock:/var/run/docker.sock"
 if [ -e $LOCALHOME/.$DISTRO-builder ] ; then
     source $LOCALHOME/.$DISTRO-builder
@@ -32,5 +41,6 @@ sudo docker run -it \
     $DOCKER_ACCESS \
     $USER_ENVIORNMENT \
     $EXTRA_DOCKER_CONFIGS \
-    $IMAGE $*
+    $SCRIPTRUNNER \
+    $IMAGE
 sudo docker rm $DISTRO-$VERSION-$STAMP
