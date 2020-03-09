@@ -4,4 +4,5 @@ RUN yum install -y sudo vim rpm-build mock screen make git rpm python libstdc++.
 ENV RELEASE_DISTRO centos
 ENV RELEASE_VERSION 7
 COPY init.sh /
+ENV LANG en_US.UTF-8
 CMD  bash /init.sh
