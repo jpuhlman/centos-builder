@@ -1,0 +1,46 @@
+#!/bin/bash
+LOCALHOME=$(echo ~)
+STAMP=$(date +%y%m%d%H%M)
+DISTRO=centos
+VERSION=8
+IMAGE=jpuhlman/$DISTRO-builder:v$VERSION
+PULL_IMAGE="1"
+MOCK_REQUIREMENTS="--privileged --network none \
+                  --cap-add=SYS_ADMIN \
+                  --security-opt seccomp:unconfined \
+                  --security-opt label:disable \
+                   --volume $LOCALHOME/.mock:/var/lib/mock \
+"
+USER_ENVIORNMENT="--hostname $HOSTNAME \
+                 -e USERID=$(id -u) \
+                 -e USERGID=$(id -g) \
+                 -e USERNAME=$USER \
+                 -e HOME=$LOCALHOME \
+                 -e LANG=en_US.UTF-8 \
+                 -e CURRENTPATH=$(pwd) \
+                 -v $LOCALHOME:$LOCALHOME \
+"
+SCRIPTRUNNER=""
+if [ "$1" ] ; then
+   SCRIPT=$1
+   SCRIPTRUNNER="-v $(readlink -f $SCRIPT):/run.sh\
+                -e SCRIPTRUNNER=/run.sh \
+   "
+fi
+
+DOCKER_ACCESS="-v /var/run/docker.sock:/var/run/docker.sock"
+if [ -e $LOCALHOME/.$DISTRO-builder ] ; then
+    source $LOCALHOME/.$DISTRO-builder
+fi
+if [ "$PULL_IMAGE" = "1" ] ; then
+    sudo docker pull $IMAGE
+fi
+sudo docker run -it \
+    --name $DISTRO-$VERSION-$STAMP \
+    $MOCK_REQUIREMENTS \
+    $DOCKER_ACCESS \
+    $USER_ENVIORNMENT \
+    $EXTRA_DOCKER_CONFIGS \
+    $SCRIPTRUNNER \
+    $IMAGE
+sudo docker rm $DISTRO-$VERSION-$STAMP
