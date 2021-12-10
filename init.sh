@@ -8,6 +8,8 @@ groupadd -g $USERGID engr
 useradd -d $HOME -M -u $USERID -g $USERGID $USERNAME
 echo "$USERNAME  ALL=(ALL)       NOPASSWD: ALL" | tee -a /etc/sudoers > /dev/null
 sudo usermod -a -G mock $USERNAME
+mkdir /run/user/$USERID
+chown $USERID.$USERGID /run/user/$USERID
 echo "export MOCK_OPTS='--old-chroot'" >> /etc/bashrc
 echo
 echo "Welcome to $RELEASE_DISTRO $RELEASE_VERSION builder"
