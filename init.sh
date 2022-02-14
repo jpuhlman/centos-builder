@@ -4,9 +4,13 @@ if [ -n "$EXTRA_PACKAGES" ] ; then
    yum install -y $EXTRA_PACKAGES
 fi
 
-sed -e "/$USERID::/d" -i /etc/passwrd
 groupadd -g $USERGID engr 
-useradd -d $HOME -M -u $USERID -g $USERGID $USERNAME
+if [ -n "$(cat /etc/passwd | grep "::$USERGID" )" ] ; then
+	USERNAME=$(cat /etc/passwd | grep "::$USERGID" | cut -d : -f 1)
+        usermod -d $HOME -u $USERID -g $USERGID $USERNAME
+else
+        useradd -d $HOME -M -u $USERID -g $USERGID $USERNAME
+fi
 echo "$USERNAME  ALL=(ALL)       NOPASSWD: ALL" | tee -a /etc/sudoers > /dev/null
 sudo usermod -a -G mock $USERNAME
 echo "export MOCK_OPTS='--old-chroot'" >> /etc/bashrc
