@@ -1,4 +1,8 @@
 FROM centos:8
+RUN cd /etc/yum.repos.d/; \
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*; \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|g' /etc/yum.repos.d/CentOS-*; \
+    sed -i 's|$releasever|8|' /etc/yum.repos.d/CentOS-*
 RUN dnf -y update
 RUN dnf --enablerepo=powertools install -y rpcgen lynx
 RUN dnf -y groupinstall "Development Tools"
