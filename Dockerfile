@@ -7,7 +7,7 @@ RUN dnf -y update
 RUN dnf --enablerepo=powertools install -y rpcgen lynx
 RUN dnf -y groupinstall "Development Tools"
 RUN dnf -y install epel-release
-RUN dnf install -y lz4 sudo perl-open chrpath python3-langtable vim rpm-build mock screen make git rpm python2 python36 libstdc++.i686 lftp gcc glibc-langpack-en wget podman
+RUN dnf install -y lz4 sudo perl-open chrpath python3-langtable vim rpm-build mock screen make git rpm python2 python36 libstdc++.i686 lftp gcc glibc-langpack-en wget podman ncurses-compat-libs
 RUN alternatives --set python /usr/bin/python2
 ENV RELEASE_DISTRO centos
 ENV RELEASE_VERSION 8
