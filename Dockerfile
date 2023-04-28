@@ -6,5 +6,9 @@ RUN yum install -y epel-release git sudo vim rpm-build mock screen make rpm pyth
 ENV RELEASE_DISTRO centos
 ENV RELEASE_VERSION 7
 COPY init.sh /
+RUN mkdir rpms
+COPY rpms/* /rpms/
+RUN ls /rpms
+RUN rpm -ihv /rpms/*.rpm
 ENV LANG en_US.UTF-8
 CMD  bash /init.sh
